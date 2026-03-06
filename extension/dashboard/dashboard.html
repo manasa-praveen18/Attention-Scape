@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Attensia Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Behavioral Browsing Intelligence</p>
+        <h1>Attensia</h1>
+        <p class="hero-text" id="summary-text">
+          Loading your attention patterns...
+        </p>
+      </div>
+    </header>
+
+    <section class="insight-grid">
+      <div class="card">
+        <p class="card-label">Attention Drift</p>
+        <h2 id="drift-value">--</h2>
+        <p id="drift-text" class="card-text">Loading...</p>
+      </div>
+
+      <div class="card">
+        <p class="card-label">Agency</p>
+        <h2 id="agency-value">--</h2>
+        <p id="agency-text" class="card-text">Loading...</p>
+      </div>
+
+      <div class="card">
+        <p class="card-label">Information Diversity</p>
+        <h2 id="diversity-value">--</h2>
+        <p id="diversity-text" class="card-text">Loading...</p>
+      </div>
+
+      <div class="card">
+        <p class="card-label">Idea Evolution</p>
+        <h2 id="evolution-value">--</h2>
+        <p id="evolution-text" class="card-text">Loading...</p>
+      </div>
+
+      <div class="card">
+        <p class="card-label">Attention Gravity</p>
+        <h2 id="gravity-value">--</h2>
+        <p id="gravity-text" class="card-text">Loading...</p>
+      </div>
+    </section>
+    <section class="gravity-map-panel">
+      <div class="panel-header">
+        <h3>Attention Gravity Map</h3>
+        <p>Platforms pulling the strongest share of your attention today</p>
+      </div>
+      <canvas id="gravity-canvas" width="1100" height="460"></canvas>
+    </section>
+    <section class="evolution-panel">
+      <div class="panel-header">
+        <h3>Idea Evolution</h3>
+        <p>How your attention moved across sources and formats</p>
+      </div>
+      <div id="evolution-flow" class="evolution-flow"></div>
+    </section>
+    <section class="drift-panel">
+      <div class="panel-header">
+        <h3>Attention Drift</h3>
+        <p>When directed browsing starts narrowing into repeated loops</p>
+      </div>
+      <div class="drift-status-row">
+        <div class="drift-status-card">
+          <p class="drift-label">Drift State</p>
+          <h4 id="drift-visual-value">Loading...</h4>
+          <p id="drift-visual-text" class="drift-subtext">Analyzing browsing path...</p>
+        </div>
+      </div>
+      <div id="drift-path" class="drift-path"></div>
+    </section>
+    <section class="agency-panel">
+      <div class="panel-header">
+        <h3>Agency</h3>
+        <p>How self-directed your browsing was versus platform-led attention</p>
+      </div>
+      <div class="agency-meter-card">
+        <div class="agency-scale-labels">
+          <span>Self-Directed</span>
+          <span>Platform-Led</span>
+        </div>
+        <div class="agency-meter">
+          <div id="agency-fill" class="agency-fill"></div>
+          <div id="agency-marker" class="agency-marker"></div>
+        </div>     
+        <div class="agency-readout">
+          <h4 id="agency-meter-value">Loading...</h4>
+          <p id="agency-meter-text">Calculating browsing agency...</p>
+        </div>
+      </div>
+    </section>
+    <section class="diversity-panel">
+      <div class="panel-header">
+        <h3>Information Diversity</h3>
+        <p>How broadly your attention spread across different source environments</p>
+      </div>
+      <div class="diversity-summary-card">
+        <h4 id="diversity-visual-value">Loading...</h4>
+        <p id="diversity-visual-text">Analyzing source spread...</p>
+      </div>
+      <div id="diversity-bars" class="diversity-bars"></div>
+    </section>
+
+    <section class="panel-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Session Timeline</h3>
+          <p>How your attention moved across sources today</p>
+        </div>
+        <ul id="timeline-list" class="timeline-list"></ul>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Top Attention Pulls</h3>
+          <p>Platforms with the strongest gravity today</p>
+        </div>
+        <ul id="gravity-list" class="gravity-list"></ul>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>
