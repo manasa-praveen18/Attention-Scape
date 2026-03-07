@@ -4,7 +4,7 @@ Attention-Scape is a privacy-first browser extension that visualizes how attenti
 
 ## Dashboard Preview
 
-![Attention-Scape Dashboard](attensia-dashboard.png)
+![Attention-Scape Dashboard](attention-scape.png)
 
 Instead of simply tracking time spent on websites, Attention-Scape analyzes browsing behavior through multiple dimensions:
 
