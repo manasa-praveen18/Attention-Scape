@@ -1,12 +1,12 @@
-# Attensia
+# Attention-Scape
 
-Attensia is a privacy-first browser extension that visualizes how attention moves across the web.
+Attention-Scape is a privacy-first browser extension that visualizes how attention moves across the web.
 
 ## Dashboard Preview
 
-![Attensia Dashboard](attensia-dashboard.png)
+![Attention-Scape Dashboard](attensia-dashboard.png)
 
-Instead of simply tracking time spent on websites, Attensia analyzes browsing behavior through multiple dimensions:
+Instead of simply tracking time spent on websites, Attention-Scape analyzes browsing behavior through multiple dimensions:
 
 - **Attention Gravity** – which platforms capture the most attention
 - **Idea Evolution** – how browsing moves across sources
@@ -26,7 +26,7 @@ All browsing data is stored locally and never leaves the user's browser.
 
 ## Purpose
 
-Attensia explores how attention flows across digital environments and helps users reflect on their browsing patterns.
+Attention-Scape explores how attention flows across digital environments and helps users reflect on their browsing patterns.
 
 ## Running the Extension
 
