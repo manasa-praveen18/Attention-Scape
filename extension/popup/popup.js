@@ -65,8 +65,23 @@ async function loadPopupData() {
   }
 }
 
+async function loadPrivacyToggle() {
+  const result = await chrome.storage.local.get(["strictPrivacy"]);
+  const toggle = document.getElementById("strict-privacy-toggle");
+
+  // default is ON
+  toggle.checked = result.strictPrivacy !== false;
+
+  toggle.addEventListener("change", async () => {
+    await chrome.storage.local.set({ strictPrivacy: toggle.checked });
+  });
+}
+
 loadPopupData();
+
 document.addEventListener("DOMContentLoaded", () => {
+  loadPrivacyToggle();
+
   const button = document.getElementById("open-dashboard");
 
   if (button) {

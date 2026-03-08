@@ -69,7 +69,7 @@ function renderTimeline(events) {
     li.innerHTML = `
       <span class="timeline-time">${formatTime(event.timestamp)}</span>
       <span class="timeline-domain">${cleanDomain(event.domain)}</span>
-      <span class="timeline-title">${event.title || "Untitled page"}</span>
+      <span class="timeline-title">${event.title || "Title hidden (strict privacy mode)"}</span>
     `;
 
     list.appendChild(li);
@@ -310,7 +310,7 @@ function renderEvolutionFlow(visitEvents) {
       </span>
       <span class="evolution-time">${formatTime(event.timestamp)}</span>
       <h4 class="evolution-domain">${cleanDomain(event.domain)}</h4>
-      <p class="evolution-title">${event.title || "Untitled page"}</p>
+      <p class="evolution-title">${event.title || "Title hidden (strict privacy mode)"}</p>
       <div class="evolution-note">${buildTransitionNote(event, next)}</div>
     `;
 
@@ -453,7 +453,7 @@ function renderDriftPanel(visitEvents) {
         <h4 class="drift-domain">${cleanDomain(event.domain)}</h4>
         <span class="drift-time">${formatTime(event.timestamp)}</span>
       </div>
-      <p class="drift-title">${event.title || "Untitled page"}</p>
+      <p class="drift-title">${event.title || "Title hidden (strict privacy mode)"}</p>
       <div class="drift-note">${getDriftNote(analysis.steps, index)}</div>
     `;
 
