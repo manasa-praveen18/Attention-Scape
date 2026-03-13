@@ -24,6 +24,12 @@ function cleanDomain(domain) {
   return domain.replace(/^www\./, "");
 }
 
+function escapeHTML(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 function formatMinutes(ms) {
   return `${(ms / 60000).toFixed(1)} min`;
 }
@@ -68,8 +74,8 @@ function renderTimeline(events) {
 
     li.innerHTML = `
       <span class="timeline-time">${formatTime(event.timestamp)}</span>
-      <span class="timeline-domain">${cleanDomain(event.domain)}</span>
-      <span class="timeline-title">${event.title || "Untitled page"}</span>
+      <span class="timeline-domain">${escapeHTML(cleanDomain(event.domain))}</span>
+      <span class="timeline-title">${escapeHTML(event.title || "Untitled page")}</span>
     `;
 
     list.appendChild(li);
@@ -96,7 +102,7 @@ function renderGravityList(sortedDomainTimes, totalTime) {
 
     li.innerHTML = `
       <div class="gravity-top">
-        <span class="gravity-domain">${cleanDomain(domain)}</span>
+        <span class="gravity-domain">${escapeHTML(cleanDomain(domain))}</span>
         <span>${share}%</span>
       </div>
       <div class="gravity-meta">
@@ -199,26 +205,17 @@ function computeAgency(sortedDomainTimes) {
 }
 
 function computeDrift(visitEvents, sortedDomainTimes) {
-  if (sortedDomainTimes.length === 0) {
+  if (visitEvents.length < 3 || sortedDomainTimes.length === 0) {
     return {
       value: "Low",
       text: "No strong attention drift pattern detected yet."
     };
   }
 
-  const totalTime = sortedDomainTimes.reduce((sum, [, ms]) => sum + ms, 0);
-  const topDomain = sortedDomainTimes[0][0];
-  const topShare = totalTime > 0 ? sortedDomainTimes[0][1] / totalTime : 0;
-  const topInfo = getPlatformInfo(topDomain);
+  const recentDomains = visitEvents.slice(-5).map((e) => cleanDomain(e.domain));
+  const uniqueRecent = new Set(recentDomains).size;
 
-  if (topShare >= 0.5 && topInfo.interaction === "algorithmic") {
-    return {
-      value: "Rising",
-      text: "Recent browsing is narrowing into a smaller loop of repeated destinations."
-    };
-  }
-
-  if (topShare >= 0.7) {
+  if (uniqueRecent <= 2) {
     return {
       value: "Rising",
       text: "Recent browsing is narrowing into a smaller loop of repeated destinations."
@@ -318,8 +315,8 @@ function renderEvolutionFlow(visitEvents) {
         ${info.type}
       </span>
       <span class="evolution-time">${formatTime(event.timestamp)}</span>
-      <h4 class="evolution-domain">${cleanDomain(event.domain)}</h4>
-      <p class="evolution-title">${event.title || "Untitled page"}</p>
+      <h4 class="evolution-domain">${escapeHTML(cleanDomain(event.domain))}</h4>
+      <p class="evolution-title">${escapeHTML(event.title || "Untitled page")}</p>
       <div class="evolution-note">${buildTransitionNote(event, next)}</div>
     `;
 
@@ -334,11 +331,10 @@ function getDriftEvents(visitEvents) {
   for (const event of sorted) {
     const previous = deduped[deduped.length - 1];
 
-    // Only skip exact back-to-back same domain — allow same domain to reappear
-    // after visiting other sites so loops are visible in the path
     if (
       previous &&
-      cleanDomain(previous.domain) === cleanDomain(event.domain)
+      cleanDomain(previous.domain) === cleanDomain(event.domain) &&
+      (previous.title || "") === (event.title || "")
     ) {
       continue;
     }
@@ -352,7 +348,7 @@ function getDriftEvents(visitEvents) {
 function analyzeDrift(visitEvents) {
   const steps = getDriftEvents(visitEvents);
 
-  if (steps.length < 2) {
+  if (steps.length < 4) {
     return {
       value: "Early",
       text: "Not enough browsing movement yet to detect a clear drift pattern.",
@@ -374,7 +370,7 @@ function analyzeDrift(visitEvents) {
   const lastFour = domains.slice(-4);
   const lastFourUnique = new Set(lastFour).size;
 
-  if (maxRepeat >= 2 || lastFourUnique <= 2) {
+  if (maxRepeat >= 3 || lastFourUnique <= 2) {
     return {
       value: "Loop Forming",
       text: "Recent browsing is circling back to the same destinations, suggesting attention may be shifting from exploration into autopilot.",
@@ -460,10 +456,10 @@ function renderDriftPanel(visitEvents) {
 
     step.innerHTML = `
       <div class="drift-step-header">
-        <h4 class="drift-domain">${cleanDomain(event.domain)}</h4>
+        <h4 class="drift-domain">${escapeHTML(cleanDomain(event.domain))}</h4>
         <span class="drift-time">${formatTime(event.timestamp)}</span>
       </div>
-      <p class="drift-title">${event.title || "Untitled page"}</p>
+      <p class="drift-title">${escapeHTML(event.title || "Untitled page")}</p>
       <div class="drift-note">${getDriftNote(analysis.steps, index)}</div>
     `;
 
@@ -651,7 +647,7 @@ function renderDiversityPanel(timeEvents) {
     row.className = "diversity-row";
 
     row.innerHTML = `
-      <div class="diversity-label">${type}</div>
+      <div class="diversity-label">${escapeHTML(type)}</div>
       <div class="diversity-bar-track">
         <div class="diversity-bar-fill" style="width:${percent}%; background:${getTypeColor(type)}"></div>
       </div>
