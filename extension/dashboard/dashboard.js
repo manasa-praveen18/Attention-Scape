@@ -350,21 +350,30 @@ function analyzeDrift(visitEvents) {
     };
   }
 
+  // Use raw recent visits (not deduplicated) to detect looping frequency
+  const recentRaw = visitEvents.slice(-20).map((e) => cleanDomain(e.domain));
+  const rawCounts = {};
+  for (const domain of recentRaw) {
+    rawCounts[domain] = (rawCounts[domain] || 0) + 1;
+  }
+  const maxRawRepeat = Math.max(...Object.values(rawCounts));
+  const topRawDomain = Object.entries(rawCounts).sort((a, b) => b[1] - a[1])[0];
+  const topRawShare = recentRaw.length > 0 ? topRawDomain[1] / recentRaw.length : 0;
+
+  // Also check deduplicated path for variety
   const domains = steps.map((event) => cleanDomain(event.domain));
   const uniqueCount = new Set(domains).size;
-
   const counts = {};
   for (const domain of domains) {
     counts[domain] = (counts[domain] || 0) + 1;
   }
-
   const repeatedDomains = Object.values(counts).filter((count) => count >= 2).length;
   const maxRepeat = Math.max(...Object.values(counts));
-
   const lastFour = domains.slice(-4);
   const lastFourUnique = new Set(lastFour).size;
 
-  if (maxRepeat >= 3 || lastFourUnique <= 2) {
+  // Loop Forming: single domain dominates raw visits OR strong repeat in deduped path
+  if (maxRawRepeat >= 5 || topRawShare >= 0.4 || maxRepeat >= 3 || lastFourUnique <= 2) {
     return {
       value: "Loop Forming",
       text: "Recent browsing is circling back to the same destinations, suggesting attention may be shifting from exploration into autopilot.",
@@ -543,18 +552,19 @@ function renderAgencyMeter(visitEvents, sortedDomainTimes) {
 }
 function getTypeColor(type) {
   const colors = {
-    search: "#3b82f6",        
-    video: "#8b5cf6",         
-    knowledge: "#22c55e",     
-    development: "#22c55e",   
-    community: "#f97316",     
-    social: "#ef4444",        
-    professional: "#06b6d4",  
-    ai: "#10b981",            
-    shopping: "#f59e0b",      
-    audio: "#ec4899",         
-    communication: "#e2e8f0", 
-    unknown: "#a78bfa" 
+    search: "#3b82f6",
+    video: "#8b5cf6",
+    knowledge: "#22c55e",
+    development: "#22c55e",
+    community: "#f97316",
+    social: "#ef4444",
+    professional: "#06b6d4",
+    ai: "#10b981",
+    shopping: "#f59e0b",
+    audio: "#ec4899",
+    communication: "#e2e8f0",
+    news: "#eab308",
+    unknown: "#a78bfa"
   };
 
   return colors[type] || colors.unknown;
