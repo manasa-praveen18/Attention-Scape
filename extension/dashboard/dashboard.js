@@ -24,12 +24,6 @@ function cleanDomain(domain) {
   return domain.replace(/^www\./, "");
 }
 
-function escapeHTML(str) {
-  const div = document.createElement("div");
-  div.textContent = str;
-  return div.innerHTML;
-}
-
 function formatMinutes(ms) {
   return `${(ms / 60000).toFixed(1)} min`;
 }
@@ -74,8 +68,8 @@ function renderTimeline(events) {
 
     li.innerHTML = `
       <span class="timeline-time">${formatTime(event.timestamp)}</span>
-      <span class="timeline-domain">${escapeHTML(cleanDomain(event.domain))}</span>
-      <span class="timeline-title">${escapeHTML(event.title || "Untitled page")}</span>
+      <span class="timeline-domain">${cleanDomain(event.domain)}</span>
+      <span class="timeline-title">${event.title || "Title hidden (strict privacy mode)"}</span>
     `;
 
     list.appendChild(li);
@@ -102,7 +96,7 @@ function renderGravityList(sortedDomainTimes, totalTime) {
 
     li.innerHTML = `
       <div class="gravity-top">
-        <span class="gravity-domain">${escapeHTML(cleanDomain(domain))}</span>
+        <span class="gravity-domain">${cleanDomain(domain)}</span>
         <span>${share}%</span>
       </div>
       <div class="gravity-meta">
@@ -315,8 +309,8 @@ function renderEvolutionFlow(visitEvents) {
         ${info.type}
       </span>
       <span class="evolution-time">${formatTime(event.timestamp)}</span>
-      <h4 class="evolution-domain">${escapeHTML(cleanDomain(event.domain))}</h4>
-      <p class="evolution-title">${escapeHTML(event.title || "Untitled page")}</p>
+      <h4 class="evolution-domain">${cleanDomain(event.domain)}</h4>
+      <p class="evolution-title">${event.title || "Title hidden (strict privacy mode)"}</p>
       <div class="evolution-note">${buildTransitionNote(event, next)}</div>
     `;
 
@@ -456,10 +450,10 @@ function renderDriftPanel(visitEvents) {
 
     step.innerHTML = `
       <div class="drift-step-header">
-        <h4 class="drift-domain">${escapeHTML(cleanDomain(event.domain))}</h4>
+        <h4 class="drift-domain">${cleanDomain(event.domain)}</h4>
         <span class="drift-time">${formatTime(event.timestamp)}</span>
       </div>
-      <p class="drift-title">${escapeHTML(event.title || "Untitled page")}</p>
+      <p class="drift-title">${event.title || "Title hidden (strict privacy mode)"}</p>
       <div class="drift-note">${getDriftNote(analysis.steps, index)}</div>
     `;
 
@@ -549,15 +543,18 @@ function renderAgencyMeter(visitEvents, sortedDomainTimes) {
 }
 function getTypeColor(type) {
   const colors = {
-    search: "#3b82f6",
-    video: "#8b5cf6",
-    knowledge: "#22c55e",
-    development: "#22c55e",
-    community: "#f97316",
-    social: "#ef4444",
-    professional: "#06b6d4",
-    news: "#eab308",
-    unknown: "#64748b"
+    search: "#3b82f6",        
+    video: "#8b5cf6",         
+    knowledge: "#22c55e",     
+    development: "#22c55e",   
+    community: "#f97316",     
+    social: "#ef4444",        
+    professional: "#06b6d4",  
+    ai: "#10b981",            
+    shopping: "#f59e0b",      
+    audio: "#ec4899",         
+    communication: "#e2e8f0", 
+    unknown: "#a78bfa" 
   };
 
   return colors[type] || colors.unknown;
@@ -647,7 +644,7 @@ function renderDiversityPanel(timeEvents) {
     row.className = "diversity-row";
 
     row.innerHTML = `
-      <div class="diversity-label">${escapeHTML(type)}</div>
+      <div class="diversity-label">${type}</div>
       <div class="diversity-bar-track">
         <div class="diversity-bar-fill" style="width:${percent}%; background:${getTypeColor(type)}"></div>
       </div>
