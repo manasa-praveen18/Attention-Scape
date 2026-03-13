@@ -24,6 +24,12 @@ function cleanDomain(domain) {
   return domain.replace(/^www\./, "");
 }
 
+function escapeHTML(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 function formatMinutes(ms) {
   return `${(ms / 60000).toFixed(1)} min`;
 }
@@ -68,8 +74,8 @@ function renderTimeline(events) {
 
     li.innerHTML = `
       <span class="timeline-time">${formatTime(event.timestamp)}</span>
-      <span class="timeline-domain">${cleanDomain(event.domain)}</span>
-      <span class="timeline-title">${event.title || "Untitled page"}</span>
+      <span class="timeline-domain">${escapeHTML(cleanDomain(event.domain))}</span>
+      <span class="timeline-title">${escapeHTML(event.title || "Title hidden (strict privacy mode)")}</span>
     `;
 
     list.appendChild(li);
@@ -96,7 +102,7 @@ function renderGravityList(sortedDomainTimes, totalTime) {
 
     li.innerHTML = `
       <div class="gravity-top">
-        <span class="gravity-domain">${cleanDomain(domain)}</span>
+        <span class="gravity-domain">${escapeHTML(cleanDomain(domain))}</span>
         <span>${share}%</span>
       </div>
       <div class="gravity-meta">
@@ -309,8 +315,8 @@ function renderEvolutionFlow(visitEvents) {
         ${info.type}
       </span>
       <span class="evolution-time">${formatTime(event.timestamp)}</span>
-      <h4 class="evolution-domain">${cleanDomain(event.domain)}</h4>
-      <p class="evolution-title">${event.title || "Untitled page"}</p>
+      <h4 class="evolution-domain">${escapeHTML(cleanDomain(event.domain))}</h4>
+      <p class="evolution-title">${escapeHTML(event.title || "Title hidden (strict privacy mode)")}</p>
       <div class="evolution-note">${buildTransitionNote(event, next)}</div>
     `;
 
@@ -350,30 +356,21 @@ function analyzeDrift(visitEvents) {
     };
   }
 
-  // Use raw recent visits (not deduplicated) to detect looping frequency
-  const recentRaw = visitEvents.slice(-20).map((e) => cleanDomain(e.domain));
-  const rawCounts = {};
-  for (const domain of recentRaw) {
-    rawCounts[domain] = (rawCounts[domain] || 0) + 1;
-  }
-  const maxRawRepeat = Math.max(...Object.values(rawCounts));
-  const topRawDomain = Object.entries(rawCounts).sort((a, b) => b[1] - a[1])[0];
-  const topRawShare = recentRaw.length > 0 ? topRawDomain[1] / recentRaw.length : 0;
-
-  // Also check deduplicated path for variety
   const domains = steps.map((event) => cleanDomain(event.domain));
   const uniqueCount = new Set(domains).size;
+
   const counts = {};
   for (const domain of domains) {
     counts[domain] = (counts[domain] || 0) + 1;
   }
+
   const repeatedDomains = Object.values(counts).filter((count) => count >= 2).length;
   const maxRepeat = Math.max(...Object.values(counts));
+
   const lastFour = domains.slice(-4);
   const lastFourUnique = new Set(lastFour).size;
 
-  // Loop Forming: single domain dominates raw visits OR strong repeat in deduped path
-  if (maxRawRepeat >= 5 || topRawShare >= 0.4 || maxRepeat >= 3 || lastFourUnique <= 2) {
+  if (maxRepeat >= 3 || lastFourUnique <= 2) {
     return {
       value: "Loop Forming",
       text: "Recent browsing is circling back to the same destinations, suggesting attention may be shifting from exploration into autopilot.",
@@ -459,10 +456,10 @@ function renderDriftPanel(visitEvents) {
 
     step.innerHTML = `
       <div class="drift-step-header">
-        <h4 class="drift-domain">${cleanDomain(event.domain)}</h4>
+        <h4 class="drift-domain">${escapeHTML(cleanDomain(event.domain))}</h4>
         <span class="drift-time">${formatTime(event.timestamp)}</span>
       </div>
-      <p class="drift-title">${event.title || "Untitled page"}</p>
+      <p class="drift-title">${escapeHTML(event.title || "Title hidden (strict privacy mode)")}</p>
       <div class="drift-note">${getDriftNote(analysis.steps, index)}</div>
     `;
 
@@ -559,12 +556,8 @@ function getTypeColor(type) {
     community: "#f97316",
     social: "#ef4444",
     professional: "#06b6d4",
-    ai: "#10b981",
-    shopping: "#f59e0b",
-    audio: "#ec4899",
-    communication: "#e2e8f0",
     news: "#eab308",
-    unknown: "#a78bfa"
+    unknown: "#64748b"
   };
 
   return colors[type] || colors.unknown;
@@ -654,7 +647,7 @@ function renderDiversityPanel(timeEvents) {
     row.className = "diversity-row";
 
     row.innerHTML = `
-      <div class="diversity-label">${type}</div>
+      <div class="diversity-label">${escapeHTML(type)}</div>
       <div class="diversity-bar-track">
         <div class="diversity-bar-fill" style="width:${percent}%; background:${getTypeColor(type)}"></div>
       </div>
