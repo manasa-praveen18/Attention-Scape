@@ -352,7 +352,7 @@ function getDriftEvents(visitEvents) {
 function analyzeDrift(visitEvents) {
   const steps = getDriftEvents(visitEvents);
 
-  if (steps.length < 4) {
+  if (steps.length < 2) {
     return {
       value: "Early",
       text: "Not enough browsing movement yet to detect a clear drift pattern.",
@@ -374,7 +374,7 @@ function analyzeDrift(visitEvents) {
   const lastFour = domains.slice(-4);
   const lastFourUnique = new Set(lastFour).size;
 
-  if (maxRepeat >= 3 || lastFourUnique <= 2) {
+  if (maxRepeat >= 2 || lastFourUnique <= 2) {
     return {
       value: "Loop Forming",
       text: "Recent browsing is circling back to the same destinations, suggesting attention may be shifting from exploration into autopilot.",
